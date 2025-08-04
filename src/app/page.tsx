@@ -1,103 +1,164 @@
-import Image from "next/image";
+// frontend-next/src/app/page.tsx
+'use client'; // Client Component para usar o hook
+import CenteredButton from '@/components/CenteredButton';
+import ClientForm from '@/components/ClientForm';
+import QrCodeModal from '@/components/QrCodeModal';
+import WhatsAppConnectButton from '@/components/WhatsAppConnectButton';
+import { useAuth } from '@/hooks/useAuth'; // Importe o hook de autenticação
+import api from '@/lib/api';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
-export default function Home() {
+export default function HomePage() {
+  const { isAuthenticated, loading, user, logout } = useAuth(); // Assume 'loading' do hook para indicar que a verificação ainda está em andamento
+  const router = useRouter(); // Importe useRouter
+
+
+  // --- Adicione/Verifique estas declarações de estado ---
+  const [isQrModalOpen, setIsQrModalOpen] = useState(false);
+  const [currentQrCode, setCurrentQrCode] = useState<string | null>(null);
+  const [qrLoading, setQrLoading] = useState(false);
+  const [currentPairingCode, setCurrentPairingCode] = useState<string | null>(null);
+  const [qrErrorMessage, setQrErrorMessage] = useState('');
+
+
+  const [currentUserId, setCurrentUserId] = useState<string | null>('SEU_ID_DE_USUARIO_LOGADO'); // Mude para o ID real do usuário
+  const [currentUserToken, setCurrentUserToken] = useState<string | null>('SEU_TOKEN_JWT_AQUI'); // Mude para o token real do usuário
+
+
+  // Função para buscar o QR Code do backend
+  const fetchQrCode = useCallback(async () => {
+    if (!isAuthenticated) return;
+    setQrLoading(true);
+    setQrErrorMessage('');
+    try {
+      const response = await api.get('/bot/qr');
+      console.log('fetchQrCode qrCode: ', response.data.qrCode)
+
+      const { qrCode, pairingCode, message } = response.data;
+
+      if (pairingCode) {
+        setCurrentQrCode(pairingCode);
+        setCurrentPairingCode(pairingCode);
+        setCurrentQrCode(null);
+        setIsQrModalOpen(true);
+      } else if (qrCode) {
+        setCurrentQrCode(qrCode);
+        setCurrentPairingCode(null);
+        setIsQrModalOpen(true); // Abre o modal se há um QR code
+      } else {
+        setCurrentQrCode(null);
+        setCurrentPairingCode(null);
+        setIsQrModalOpen(false); // <--- FECHA O MODAL AQUI
+        setQrErrorMessage(message || 'Bot conectado ou sem código disponível.');
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.error('Erro ao buscar código/QR:', error);
+      setQrErrorMessage('Erro ao carregar o código. Tente novamente mais tarde.');
+      setCurrentQrCode(null);
+      setCurrentPairingCode(null);
+      setIsQrModalOpen(false);
+    } finally {
+      setQrLoading(false);
+    }
+  }, [isAuthenticated]);
+
+
+  // --- NOVO: Lógica de Polling ---
+  /*  useEffect(() => {
+     let interval: NodeJS.Timeout | null = null;
+     // Inicia o polling apenas se o modal estiver aberto
+     if (isQrModalOpen) {
+       interval = setInterval(() => {
+         fetchQrCode(); // Chama a função para verificar o status do QR/Link
+       }, 50000); // A cada 5 segundos
+     }
+ 
+     // Limpa o intervalo quando o componente desmonta ou o modal fecha
+     return () => {
+       if (interval) {
+         clearInterval(interval);
+       }
+     };
+   }, [isQrModalOpen, fetchQrCode]);
+  */
+  // Chama fetchQrCode quando o componente monta e o usuário está autenticado
+  /* useEffect(() => {
+    if (isAuthenticated) {
+      fetchQrCode();
+    }
+  }, [isAuthenticated, fetchQrCode]); */
+  // 
+
+
+  useEffect(() => {
+    if (loading === false && !isAuthenticated) {
+      router.push('/login'); // Redireciona se não estiver autenticado
+    }
+  }, [isAuthenticated, loading, router]);
+
+  if (isAuthenticated === null) {
+    return <p>Carregando informações de autenticação...</p>; // Ou um spinner de carregamento
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div style={{ textAlign: 'center', marginTop: '50px' }}>
+        <h1>Bem-vindo ao SaaS!</h1>
+        <p>Por favor, <a href="/login">faça login</a> ou <a href="/register">cadastre-se</a> para continuar.</p>
+      </div>
+    );
+  }
+
+  const handleNavigateToProducts = () => {
+    router.push('/products'); // Navega para a página /products
+  };
+
+  // Se autenticado, renderiza o formulário de configuração
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <main style={{ padding: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px', padding: '15px', backgroundColor: '#f0f0f0', borderRadius: '8px' }}>
+        <h1 style={{ margin: 0, color: '#333', fontSize: '28px' }}>Painel de Configurações</h1>
+        {user && (
+          <p style={{ margin: 0, fontSize: '16px', color: '#555' }}>Bem-vindo, <strong style={{ color: '#007bff' }}>{user.email}</strong>!</p>
+        )}
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        <CenteredButton href="/products">
+          Produtos
+        </CenteredButton>
+
+        <button
+          onClick={logout} // Chama a função logout do hook
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#dc3577', // Vermelho para logout
+            color: 'white',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            fontWeight: 'bold',
+            transition: 'background-color 0.3s ease'
+          }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          Logout
+        </button>
+      </div>
+
+
+      {isAuthenticated && <WhatsAppConnectButton userId={user?.id} userToken={user?.token} />}
+
+      <QrCodeModal
+        qrCode={currentQrCode}
+        isOpen={isQrModalOpen}
+        onClose={() => setIsQrModalOpen(false)}
+        isLoading={qrLoading}
+      />
+
+      <ClientForm />
+
+    </main>
   );
 }

@@ -1,26 +1,175 @@
-@import "tailwindcss";
-
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* frontend-next/src/app/globals.css */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f7f6;
+}
+
+/* estoque-saas/frontend/app/globals.css (ou seu arquivo de estilo principal) */
+
+/* Estilos para o container que centraliza o botão */
+.button-container {
+  display: flex; /* Usa flexbox para centralizar */
+  justify-content: center; /* Centraliza horizontalmente */
+  align-items: center; /* Centraliza verticalmente (se o container tiver altura) */
+  width: 100%; /* Garante que o container ocupe a largura total */
+  margin-top: 30px; /* Espaço acima do botão */
+  margin-bottom: 20px; /* Espaço abaixo do botão */
+}
+
+/* Estilos para o botão em si */
+.custom-button {
+  padding: 15px 30px; /* Mais padding para um botão maior */
+  font-size: 1.1em; /* Fonte um pouco maior */
+  font-weight: bold; /* Texto em negrito */
+  color: white; /* Cor do texto */
+  background-color: #007bff; /* Azul vibrante */
+  border: none; /* Sem borda padrão */
+  border-radius: 8px; /* Cantos mais arredondados */
+  cursor: pointer; /* Cursor de clique */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* Transições suaves */
+  box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3); /* Sombra sutil para profundidade */
+  text-decoration: none; /* Remove sublinhado se for um Link */
+  display: inline-block; /* Para o Link se comportar como botão */
+}
+
+.custom-button:hover {
+  background-color: #0056b3; /* Azul mais escuro no hover */
+  transform: translateY(-2px); /* Efeito de "levantar" */
+  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.4); /* Sombra mais intensa no hover */
+}
+
+.custom-button:active {
+  background-color: #004085; /* Azul ainda mais escuro no clique */
+  transform: translateY(0); /* Retorna à posição original */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra menor no clique */
+}
+
+/* estoque-saas/frontend/app/globals.css (ou seu arquivo de estilo principal) */
+
+/* Container para centralizar e dar espaçamento à barra de pesquisa */
+.search-bar-container {
+  display: flex; /* Usa flexbox para alinhar o input e talvez um botão/ícone */
+  justify-content: center; /* Centraliza a barra de pesquisa horizontalmente */
+  margin: 30px auto; /* Espaçamento superior/inferior e centralização horizontal */
+  max-width: 500px; /* Limita a largura máxima da barra de pesquisa */
+  width: 100%; /* Ocupa a largura disponível até o max-width */
+}
+
+/* Estilos para o campo de input de pesquisa */
+.search-input {
+  flex-grow: 1; /* Permite que o input preencha o espaço disponível */
+  padding: 12px 20px; /* Mais padding para um toque mais "premium" */
+  font-size: 1.1em; /* Tamanho de fonte legível */
+  border: 2px solid #e0e0e0; /* Borda suave */
+  border-radius: 30px; /* Cantos bem arredondados para um visual suave */
+  outline: none; /* Remove o contorno padrão ao focar */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease; /* Transições suaves */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08); /* Sombra sutil */
+  color: #333; /* Cor do texto */
+}
+
+.search-input::placeholder {
+  color: #999; /* Cor do placeholder */
+  opacity: 0.8; /* Transparência do placeholder */
+}
+
+.search-input:focus {
+  border-color: #007bff; /* Borda azul vibrante ao focar */
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25); /* Sombra de foco azulada */
+}
+
+/* Opcional: Estilo para um botão de pesquisa ao lado do input */
+/*
+.search-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 30px;
+  padding: 12px 18px;
+  margin-left: -40px; // Ajusta para o botão sobrepor um pouco o input
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #0056b3;
+}
+*/
+
+/* estoque-saas/frontend/app/globals.css */
+
+/* ... (seus estilos existentes para .product-list-container, .search-bar-container, .search-input, etc.) ... */
+
+.no-products-message {
+  text-align: center;
+  margin-top: 30px;
+  font-size: 1.1em;
+  color: #666;
+  padding: 20px;
+  background-color: #e9ecef;
+  border-radius: 8px;
+}
+
+/* Estilos para a tabela */
+.table-responsive {
+  overflow-x: auto; /* Garante que a tabela seja "scrollable" horizontalmente em telas pequenas */
+  margin-top: 30px;
+}
+
+.products-table {
+  width: 100%; /* Ocupa a largura total do container */
+  border-collapse: collapse; /* Remove o espaço entre as bordas das células */
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* Cantos arredondados na tabela */
+  overflow: hidden; /* Garante que os cantos arredondados sejam visíveis */
+}
+
+/* Estilos para o cabeçalho da tabela */
+.products-table thead th {
+  background-color: #007bff; /* Cor de fundo do cabeçalho */
+  color: white; /* Cor do texto do cabeçalho */
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+  letter-spacing: 0.05em;
+}
+
+/* Estilo para as células do corpo da tabela */
+.products-table tbody td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #eee; /* Linha divisória entre as linhas */
+  color: #444;
+  font-size: 0.95em;
+}
+
+/* Efeito zebrado (alternado) para linhas da tabela */
+.products-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Cor de fundo para linhas pares */
+}
+
+.products-table tbody tr:hover {
+  background-color: #e2f2ff; /* Cor de fundo ao passar o mouse */
+  transition: background-color 0.2s ease;
+}
+
+/* Bordas nos cantos da tabela */
+.products-table thead tr:first-child th:first-child {
+  border-top-left-radius: 8px;
+}
+
+.products-table thead tr:first-child th:last-child {
+  border-top-right-radius: 8px;
+}
+
+.products-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 8px;
+}
+
+.products-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 8px;
 }
