@@ -3,8 +3,6 @@
 
 import React, { useState } from 'react';
 import api from '../lib/api'; // Importa a instância do axios configurada
-import { useRouter } from 'next/navigation';
-
 
 export default function ClientForm() {
   const [whatsappJID, setWhatsappJID] = useState<string>('');

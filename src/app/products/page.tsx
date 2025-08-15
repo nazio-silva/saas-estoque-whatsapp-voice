@@ -15,13 +15,13 @@ function ProductListPage() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
-    const [searchQuery, setSearchQuery] = useState(''); // Estado para o valor do campo de pesquisa
+    //const [searchQuery, setSearchQuery] = useState(''); // Estado para o valor do campo de pesquisa
 
     const router = useRouter();
-    const searchParams = useSearchParams();
+    //const searchParams = useSearchParams();
 
     // Obtenha o termo de pesquisa inicial da URL
-    const initialSearchFromUrl = searchParams.get('search') || '';
+    //const initialSearchFromUrl = searchParams.get('search') || '';
 
     // Usamos useCallback para memorizar a função de busca e evitar recriações desnecessárias
     const fetchProducts = useCallback(async (search = '') => {
@@ -80,27 +80,8 @@ function ProductListPage() {
 
     // Efeito para carregar produtos quando o componente monta ou o termo de pesquisa muda na URL
     useEffect(() => {
-        // Inicializa o estado local da pesquisa com o valor da URL
-        if (initialSearchFromUrl !== searchQuery) {
-            setSearchQuery(initialSearchFromUrl);
-        }
-        fetchProducts(initialSearchFromUrl); // Chama a busca com o valor da URL
-    }, [initialSearchFromUrl, fetchProducts]); // initialSearchFromUrl e fetchProducts como dependências
-
-    // Handle para o campo de pesquisa
-    const handleSearchChange = (e: any) => {
-        const newSearchValue = e.target.value;
-        setSearchQuery(newSearchValue); // Atualiza o estado local do campo
-
-        // Atualiza a URL para refletir a busca. Isso vai disparar o useEffect e refetch os produtos.
-        const newSearchParams = new URLSearchParams(searchParams.toString());
-        if (newSearchValue) {
-            newSearchParams.set('search', newSearchValue);
-        } else {
-            newSearchParams.delete('search'); // Remove o parâmetro se a pesquisa estiver vazia
-        }
-        router.push(`/products?${newSearchParams.toString()}`);
-    };
+        fetchProducts(); // Chama a busca com o valor da URL
+    }, []); // initialSearchFromUrl e fetchProducts como dependências
 
 
     if (loading) return <div className="loading">Carregando produtos...</div>;
@@ -125,35 +106,35 @@ function ProductListPage() {
                 />
                 </div> */}
 
-{products.length === 0 ? (
-                <p className="no-products-message">Nenhum produto encontrado. Tente ajustar sua pesquisa ou adicione um novo produto!</p>
-            ) : (
-                <div className="table-responsive"> {/* Container para responsividade da tabela */}
-                    <table className="products-table">
-                        <thead>
-                            <tr>
-                                <th>Nome</th>
-                                <th>Quantidade</th>
-                                <th>Preço</th>
-                                <th>Descrição</th>
-                                {/* Adicione mais cabeçalhos se tiver outros campos */}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {products.map((product: any) => (
-                                <tr key={product._id}>
-                                    <td>{product.name}</td>
-                                    <td>{product.quantity}</td>
-                                    <td>R$ {product.price ? product.price.toFixed(2) : 'N/A'}</td>
-                                    <td>{product.description || '-'}</td> {/* Exibe '-' se não houver descrição */}
-                                    {/* Adicione mais células para outros campos */}
+    {products.length === 0 ? (
+                    <p className="no-products-message">Nenhum produto encontrado. Tente ajustar sua pesquisa ou adicione um novo produto!</p>
+                ) : (
+                    <div className="table-responsive"> {/* Container para responsividade da tabela */}
+                        <table className="products-table">
+                            <thead>
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Quantidade</th>
+                                    <th>Preço</th>
+                                    <th>Descrição</th>
+                                    {/* Adicione mais cabeçalhos se tiver outros campos */}
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                </div>
-            )}
-        </div>
+                            </thead>
+                            <tbody>
+                                {products.map((product: any) => (
+                                    <tr key={product._id}>
+                                        <td>{product.name}</td>
+                                        <td>{product.quantity}</td>
+                                        <td>R$ {product.price ? product.price.toFixed(2) : 'N/A'}</td>
+                                        <td>{product.description || '-'}</td> {/* Exibe '-' se não houver descrição */}
+                                        {/* Adicione mais células para outros campos */}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                )}
+            </div>
         </Suspense>
     );
 }
