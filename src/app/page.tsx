@@ -6,6 +6,7 @@ import QrCodeModal from '@/components/QrCodeModal';
 import WhatsAppConnectButton from '@/components/WhatsAppConnectButton';
 import { useAuth } from '@/hooks/useAuth'; // Importe o hook de autenticação
 import api from '@/lib/api';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useState } from 'react';
@@ -106,15 +107,18 @@ export default function HomePage() {
   if (!isAuthenticated) {
     return (
       <div style={{ textAlign: 'center', marginTop: '50px' }}>
-        <h1>Bem-vindo ao SaaS!</h1>
+
+         <Image 
+            src="/logo.png" 
+            alt="Logo do meu app" 
+            width={250} 
+            height={250} 
+          />
+
         <p>Por favor, <a href="/login">faça login</a> ou <a href="/register">cadastre-se</a> para continuar.</p>
       </div>
     );
   }
-
-  const handleNavigateToProducts = () => {
-    router.push('/products'); // Navega para a página /products
-  };
 
   // Se autenticado, renderiza o formulário de configuração
   return (

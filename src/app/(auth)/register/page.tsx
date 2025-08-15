@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 import api from '@/lib/api'; // Usando alias '@' se configurado, ou '../lib/api'
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
@@ -59,7 +60,16 @@ export default function RegisterPage() {
 
   return (
     <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '400px', margin: '80px auto', padding: '30px', border: '1px solid #ddd', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}>
-      <h1 style={{ textAlign: 'center', color: '#333', marginBottom: '30px' }}>Stock voice - Saas</h1>
+      <div style={{ textAlign: 'center'}}>
+      
+               <Image 
+                  src="/logo.png" 
+                  alt="Logo do meu app" 
+                  width={200} 
+                  height={200} 
+                />
+      
+            </div>
 
       {message && (
         <div style={{
