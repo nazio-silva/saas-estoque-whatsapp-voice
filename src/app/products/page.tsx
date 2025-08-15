@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 // estoque-saas/frontend/app/products/page.jsx (ou .tsx)
 'use client'; // <-- INDICA QUE ESTE É UM COMPONENTE DE CLIENTE
-
+import { Suspense } from "react";
 import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Head from 'next/head';
@@ -107,6 +107,7 @@ function ProductListPage() {
     if (error) return <div className="error">Erro: {error}</div>;
 
     return (
+        <Suspense fallback={<div>Carregando...</div>}>
         <div className="product-list-container">
             <Head>
                 <title>Meus Produtos - Estoque SaaS</title>
@@ -153,6 +154,7 @@ function ProductListPage() {
                 </div>
             )}
         </div>
+        </Suspense>
     );
 }
 
